@@ -60,33 +60,9 @@ async function init() {
 
 // Função inteligente para carregar produtos
 async function loadProductsData() {
-    // 1. Verifica versão e limpa cache antigo se necessário
-    let storedVersion = localStorage.getItem('pudin_data_version');
-    if (storedVersion != DATA_VERSION) {
-        localStorage.removeItem('pudin_products');
-        localStorage.setItem('pudin_data_version', DATA_VERSION);
-    }
-
-    // 2. Tenta pegar do LocalStorage (Edições locais da Admin ou Cache)
-    let localData = JSON.parse(localStorage.getItem('pudin_products'));
-
-    // 3. Se não tiver dados locais E tiver uma URL externa configurada, busca lá
-    if (!localData && EXTERNAL_DATA_URL) {
-        try {
-            gridElement.innerHTML = '<div style="width:100%; text-align:center; padding:2rem;">Carregando garimpos... 🍮</div>';
-            const response = await fetch(EXTERNAL_DATA_URL);
-            const data = await response.json();
-            if (Array.isArray(data)) {
-                localData = data; // Sucesso!
-            }
-        } catch (error) {
-            console.error("Erro ao buscar dados externos:", error);
-            showToast('Erro ao carregar novidades. Usando backup.', 'error');
-        }
-    }
-
-    // 4. Se falhar tudo ou não tiver URL, usa a lista hardcoded (defaultProducts)
-    products = localData || defaultProducts;
+    // Agora usamos apenas o Contentful!
+    // Deixamos a lista vazia inicialmente para o contentful-logic.js preencher.
+    products = [];
 
     // 5. Normaliza os dados (garante imagens e estoque)
     products = products.map(p => {
