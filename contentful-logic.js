@@ -20,6 +20,11 @@ function fetchContentfulProducts() {
         order: '-sys.createdAt'  // Mostra os mais recentes primeiro
     })
     .then((response) => {
+        console.log("Contentful respondeu:", response); // Para depuração
+        if (response.items.length === 0) {
+            console.warn("Conectou, mas não veio nenhum produto. Verifique se estão como 'Published' e se o Content Model ID é 'product'.");
+        }
+
         // Converte os dados do Contentful para o formato que o script.js entende
         const contentfulProducts = response.items.map(item => {
             const fields = item.fields;
