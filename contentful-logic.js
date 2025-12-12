@@ -52,7 +52,11 @@ function fetchContentfulProducts() {
     })
     .catch((error) => {
         console.error("Erro ao buscar do Contentful:", error);
-        productGrid.innerHTML = '<p style="text-align:center; width:100%;">Ops! Não consegui carregar os produtos. :(</p>';
+        productGrid.innerHTML = `
+            <div style="text-align:center; width:100%;">
+                <p>Ops! Não consegui carregar os produtos. :(</p>
+                <p style="color:red; font-size:0.8rem; margin-top:10px;">Erro: ${error.message || JSON.stringify(error)}</p>
+            </div>`;
     });
 }
 
