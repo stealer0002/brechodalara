@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pudin Clothes 🍮 | Garimpos & Mimos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="logo">🍮 Pudin Clothes</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#shop">Garimpos</a></li>
+                <li><a href="#feedbacks">Luv</a></li>
+                <!-- ATENÇÃO: Coloque o link real do seu grupo do WhatsApp abaixo -->
+                <li><a href="https://chat.whatsapp.com/SEU_LINK_AQUI" target="_blank" rel="noopener noreferrer" class="group-link">Grupo VIP ✨</a></li>
+                <li><a href="#" id="cart-btn">Sacola (0)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Garimpos com amor <br> & estética 🎀</h1>
+            <p>Moda circular, alternativa e cheia de personalidade. Entregamos mimos para todo o Brasil!</p>
+            <a href="#shop" class="btn-cta">Ver Tudinho ✨</a>
+        </div>
+    </section>
+
+    <!-- Seção de Infos / Destaques -->
+    <section class="infos-bar">
+        <div class="info-item">
+            <span>📦</span>
+            <p>Envio p/ todo BR</p>
+        </div>
+        <div class="info-item">
+            <span>🤝</span>
+            <p>Entrega em Mãos</p>
+        </div>
+        <div class="info-item">
+            <span>♻️</span>
+            <p>Moda Consciente</p>
+        </div>
+    </section>
+
+    <main id="shop" class="container">
+        <div class="section-title">
+            <h2>✨ Novidades no Cabide ✨</h2>
+            <p>Deslize para ver mais mimos</p>
+        </div>
+
+        <div class="filters">
+            <input type="text" id="search-input" placeholder="🔍 O que você procura?" class="search-bar" aria-label="Buscar produtos">
+            <button class="filter-btn active" data-category="all">Tudinho</button>
+            <button class="filter-btn" data-category="roupas">Looks</button>
+            <button class="filter-btn" data-category="acessorios">Acessórios</button>
+            <button class="filter-btn" data-category="calcados">Calçados</button>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+            <!-- Produtos injetados via JS -->
+        </div>
+    </main>
+
+    <!-- Seção de Feedbacks -->
+    <section id="feedbacks" class="feedbacks-section">
+        <h2>O que as besties dizem 💖</h2>
+        
+        <!-- Destaques do Instagram -->
+        <div class="instagram-highlights">
+            <a href="https://www.instagram.com/stories/highlights/18000630719560226/" target="_blank" rel="noopener noreferrer" class="highlight-item">
+                <div class="highlight-circle">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=100&q=60" alt="Clientes">
+                </div>
+                <span>Clientes</span>
+            </a>
+            <a href="https://www.instagram.com/stories/highlights/18128511319392304/" target="_blank" rel="noopener noreferrer" class="highlight-item">
+                <div class="highlight-circle">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=100&q=60" alt="Mimos">
+                </div>
+                <span>Mimos</span>
+            </a>
+        </div>
+
+        <!-- Vídeo Direto (Exemplo) -->
+        <div class="video-section">
+            <p style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 10px;">Vejam como eu garimpo! 🎥</p>
+            <video controls class="styled-video" poster="https://images.unsplash.com/photo-1550614000-4b9519e02a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
+                <source src="garimpo.mp4" type="video/mp4">
+                Seu navegador não suporta vídeos :(
+            </video>
+        </div>
+
+        <div class="feedback-grid">
+            <div class="feedback-card">
+                <img src="feedback1.jpg" alt="Feedback 1" style="width: 100%; border-radius: 8px;">
+            </div>
+            <div class="feedback-card">
+                <img src="feedback2.jpg" alt="Feedback 2" style="width: 100%; border-radius: 8px;">
+            </div>
+            <div class="feedback-card">
+                <img src="feedback3.jpg" alt="Feedback 3" style="width: 100%; border-radius: 8px;">
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Feito com <span id="open-admin" style="cursor: default;">💖</span> por <strong>Pudin Clothes</strong> | @pudinclothes</p>
+        <p style="font-size: 0.8rem; margin-top: 5px;">Enviamos amor em cada pacotinho 💌</p>
+    </footer>
+
+    <!-- Modal Admin -->
+    <div id="admin-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span onclick="closeModal()" style="float:right; cursor:pointer; font-size:1.5rem;">&times;</span>
+            
+            <!-- Tela de Login -->
+            <div id="login-screen">
+                <h3>Login da Chefa 👑</h3>
+                <form class="admin-form" onsubmit="handleLogin(event)">
+                    <select id="admin-user" required aria-label="Selecionar usuário">
+                        <option value="" disabled selected>Quem é você? 💖</option>
+                        <option value="lara">Lara 🧚‍♀️</option>
+                        <option value="monalisa">Monalisa 🎨</option>
+                    </select>
+                    <input type="password" id="admin-pass" placeholder="Senha secreta..." required aria-label="Senha">
+                    <button type="submit" class="btn-admin">Entrar</button>
+                </form>
+            </div>
+
+            <!-- Tela de Adicionar Produto (Oculta inicialmente) -->
+            <div id="admin-panel" style="display:none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">Novos Garimpos ✨</h3>
+                    <button onclick="logout()" class="btn-admin" style="background: #ff6b6b; color: white; margin: 0; padding: 5px 10px; font-size: 0.9rem;">Sair 🚪</button>
+                </div>
+                <form class="admin-form" onsubmit="handleBulkAddProduct(event)">
+                    <div id="products-container" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
+                        <!-- Primeiro item padrão -->
+                        <div class="product-entry" style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #ccc;">
+                            <input type="text" name="title" placeholder="Nome da peça" required style="margin-bottom: 10px;">
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <select name="category" style="flex: 1;">
+                                    <option value="roupas">Roupas</option>
+                                    <option value="acessorios">Acessórios</option>
+                                    <option value="calcados">Calçados</option>
+                                </select>
+                                <input type="number" name="price" placeholder="Preço" step="0.01" required style="flex: 1;">
+                                <input type="number" name="stock" placeholder="Qtd" min="1" value="1" required style="width: 80px;">
+                            </div>
+                            <label style="display:block; text-align:left; font-size:0.9rem; margin-bottom:5px;">Fotos:</label>
+                            <input type="file" name="images" accept="image/*" multiple required>
+                        </div>
+                    </div>
+                    
+                    <button type="button" onclick="addNewProductField()" class="btn-admin" style="background: #6c5ce7; margin-bottom: 10px;">+ Adicionar outra peça</button>
+                    <button type="submit" class="btn-admin">Salvar Tudinho</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sacola -->
+    <div id="cart-modal" class="modal-overlay">
+        <div class="modal-content cart-content">
+            <span onclick="closeCartModal()" style="float:right; cursor:pointer; font-size:1.5rem;">&times;</span>
+            <h3>Sua Sacola 🛍️</h3>
+            <div id="cart-items" class="cart-items-container">
+                <!-- Itens do carrinho vão aqui -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">Total: <span id="cart-total-price">R$ 0,00</span></div>
+                <button class="btn-cta" style="width:100%; margin-top:10px; opacity: 0.5; cursor: not-allowed;">Carregando sacola... 🛍️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pós-Checkout -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 350px;">
+            <h3>E aí, bestie? 💖</h3>
+            <p>A guia do WhatsApp abriu?</p>
+            <p style="font-size: 0.9rem; color: #666; margin: 10px 0;">Se você finalizou a compra lá, pode limpar sua sacola aqui para não se confundir.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                <button onclick="finishCheckout()" class="btn-cta" style="background: #4CAF50; border-color: #45a049; font-size: 0.9rem;">Já comprei! Limpar 🛍️</button>
+                <button onclick="closeCheckoutModal()" class="btn-cta" style="background: #fff; color: var(--text-color); font-size: 0.9rem;">Ainda não</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container de Notificações -->
+    <div id="toast-container"></div>
+
+    <!-- Botão Voltar ao Topo -->
+    <button id="back-to-top" title="Voltar ao topo">⬆️</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
