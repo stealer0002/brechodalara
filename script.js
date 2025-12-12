@@ -41,14 +41,17 @@ const defaultProducts = [
     }
 ];
 
-let products = JSON.parse(localStorage.getItem('pudin_products')) || defaultProducts;
+// --- CONFIGURAÇÃO DE AUTOMAÇÃO (OPCIONAL) ---
+// Se você quiser usar uma Planilha do Google ou API externa no futuro,
+// coloque o link do JSON aqui. Enquanto estiver vazio (""), usa a lista acima.
+const EXTERNAL_DATA_URL = ""; 
 
-products = products.map(p => {
-    if (!p.images && p.image) return { ...p, images: [p.image] };
-    // Garante que produtos antigos tenham estoque (1 se disponível, 0 se vendido)
-    if (p.stock === undefined) p.stock = p.sold ? 0 : 1;
-    return p;
-});
+// --- CONTROLE DE VERSÃO ---
+// IMPORTANTE: Mude esse número (+1) sempre que você editar a lista acima (defaultProducts).
+// Isso avisa o navegador das clientes que tem novidade e força a atualização!
+const DATA_VERSION = 1; 
+
+let products = []; // Será preenchido no init()
 
 let cart = JSON.parse(localStorage.getItem('pudin_cart')) || [];
 let isAdmin = sessionStorage.getItem('pudin_is_admin') === 'true';
@@ -72,7 +75,8 @@ const searchInput = document.getElementById('search-input');
 const modal = document.getElementById('admin-modal');
 const cartModal = document.getElementById('cart-modal');
 
-function init() {
+async function init() {
+    await loadProductsData(); // Carrega os produtos (local ou externo)
     renderProducts(products);
     setupFilters();
     setupSearch();
@@ -90,6 +94,44 @@ function init() {
     document.getElementById('cart-btn').addEventListener('click', (e) => {
         e.preventDefault();
         openCartModal();
+    });
+}
+
+// Função inteligente para carregar produtos
+async function loadProductsData() {
+    // 1. Verifica versão e limpa cache antigo se necessário
+    let storedVersion = localStorage.getItem('pudin_data_version');
+    if (storedVersion != DATA_VERSION) {
+        localStorage.removeItem('pudin_products');
+        localStorage.setItem('pudin_data_version', DATA_VERSION);
+    }
+
+    // 2. Tenta pegar do LocalStorage (Edições locais da Admin ou Cache)
+    let localData = JSON.parse(localStorage.getItem('pudin_products'));
+
+    // 3. Se não tiver dados locais E tiver uma URL externa configurada, busca lá
+    if (!localData && EXTERNAL_DATA_URL) {
+        try {
+            gridElement.innerHTML = '<div style="width:100%; text-align:center; padding:2rem;">Carregando garimpos... 🍮</div>';
+            const response = await fetch(EXTERNAL_DATA_URL);
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                localData = data; // Sucesso!
+            }
+        } catch (error) {
+            console.error("Erro ao buscar dados externos:", error);
+            showToast('Erro ao carregar novidades. Usando backup.', 'error');
+        }
+    }
+
+    // 4. Se falhar tudo ou não tiver URL, usa a lista hardcoded (defaultProducts)
+    products = localData || defaultProducts;
+
+    // 5. Normaliza os dados (garante imagens e estoque)
+    products = products.map(p => {
+        if (!p.images && p.image) return { ...p, images: [p.image] };
+        if (p.stock === undefined) p.stock = p.sold ? 0 : 1;
+        return p;
     });
 }
 
@@ -121,7 +163,7 @@ function renderProducts(list) {
         const isSold = product.stock === 0 ? 'sold' : '';
         card.className = `product-card ${isSold}`;
 
-        const qtyInCart = cart.filter(i => i.id === product.id).length;
+        const qtyInCart = cart.filter(i => i.id == product.id).length;
         const btnText = qtyInCart > 0 ? `Eu quero! (${qtyInCart})` : 'Eu quero!';
 
         // Gera HTML das imagens
@@ -131,8 +173,8 @@ function renderProducts(list) {
 
         // Botões de navegação (só aparecem se tiver mais de 1 foto)
         const sliderControls = product.images.length > 1 ? `
-            <button class="slider-btn prev" onclick="changeImage(${product.id}, -1)">&#10094;</button>
-            <button class="slider-btn next" onclick="changeImage(${product.id}, 1)">&#10095;</button>
+            <button class="slider-btn prev" onclick="changeImage('${product.id}', -1)">&#10094;</button>
+            <button class="slider-btn next" onclick="changeImage('${product.id}', 1)">&#10095;</button>
         ` : '';
         
         card.innerHTML = `
@@ -150,8 +192,8 @@ function renderProducts(list) {
                             ? `<button class="btn-add" disabled style="background: #ccc; cursor: not-allowed; border: 2px solid #999; color: #666; padding: 5px 15px; border-radius: 20px;">Já foi :(</button>`
                             : `<button class="btn-add" data-id="${product.id}" style="cursor: pointer; background: var(--accent-color); color: white; border: 2px solid var(--text-color); padding: 5px 15px; border-radius: 20px; font-weight: bold; box-shadow: 2px 2px 0px #333;">${btnText}</button>`
                         }
-                        ${isAdmin ? `<button onclick="toggleSold(${product.id})" class="btn-toggle-sold" title="Marcar/Desmarcar Vendido">💲</button>` : ''}
-                        ${isAdmin ? `<button onclick="deleteProduct(${product.id})" class="btn-delete" title="Excluir">🗑️</button>` : ''}
+                        ${isAdmin ? `<button onclick="toggleSold('${product.id}')" class="btn-toggle-sold" title="Marcar/Desmarcar Vendido">💲</button>` : ''}
+                        ${isAdmin ? `<button onclick="deleteProduct('${product.id}')" class="btn-delete" title="Excluir">🗑️</button>` : ''}
                     </div>
                 </div>
             </div>
@@ -244,10 +286,10 @@ function setupFilters() {
 }
 
 function addToCart(e) {
-    const id = parseInt(e.target.dataset.id);
-    const product = products.find(p => p.id === id);
+    const id = e.target.dataset.id; // Removido parseInt para aceitar IDs do Contentful
+    const product = products.find(p => p.id == id);
     
-    const qtyInCart = cart.filter(i => i.id === id).length;
+    const qtyInCart = cart.filter(i => i.id == id).length;
 
     // Verifica se ainda tem estoque disponível
     if(product && product.stock > qtyInCart) {
@@ -312,12 +354,12 @@ function openCartModal() {
                 <div class="cart-item-title">${escapeHtml(item.title)}</div>
                 <div class="cart-item-price">R$ ${item.price.toFixed(2).replace('.', ',')} (cada)</div>
                 <div class="cart-qty-controls">
-                    <button class="btn-qty" onclick="changeCartQty(${item.id}, -1)">-</button>
+                    <button class="btn-qty" onclick="changeCartQty('${item.id}', -1)">-</button>
                     <span>${item.qty}</span>
-                    <button class="btn-qty" onclick="changeCartQty(${item.id}, 1)">+</button>
+                    <button class="btn-qty" onclick="changeCartQty('${item.id}', 1)">+</button>
                 </div>
             </div>
-            <button onclick="removeProductFromCart(${item.id})" class="btn-delete" title="Remover todos">🗑️</button>
+            <button onclick="removeProductFromCart('${item.id}')" class="btn-delete" title="Remover todos">🗑️</button>
         `;
         container.appendChild(itemEl);
     });
@@ -349,8 +391,8 @@ function closeCartModal() {
 function changeCartQty(id, delta) {
     if (delta > 0) {
         // Adiciona mais um do mesmo produto
-        const item = products.find(p => p.id === id) || cart.find(c => c.id === id);
-        const currentQty = cart.filter(c => c.id === id).length;
+        const item = products.find(p => p.id == id) || cart.find(c => c.id == id);
+        const currentQty = cart.filter(c => c.id == id).length;
         
         if(item && currentQty < item.stock) {
             cart.push(item);
@@ -359,7 +401,7 @@ function changeCartQty(id, delta) {
         }
     } else {
         // Remove uma instância do produto
-        const index = cart.findIndex(c => c.id === id);
+        const index = cart.findIndex(c => c.id == id);
         if(index > -1) cart.splice(index, 1);
     }
     saveCart();
@@ -368,13 +410,13 @@ function changeCartQty(id, delta) {
     // Atualiza o botão na grid se estiver visível
     const btn = document.querySelector(`.btn-add[data-id="${id}"]`);
     if(btn) {
-        const qty = cart.filter(c => c.id === id).length;
+        const qty = cart.filter(c => c.id == id).length;
         btn.innerText = qty > 0 ? `Eu quero! (${qty})` : 'Eu quero!';
     }
 }
 
 function removeProductFromCart(id) {
-    cart = cart.filter(item => item.id !== id);
+    cart = cart.filter(item => item.id != id);
     saveCart();
     openCartModal();
     
@@ -388,17 +430,17 @@ function validateCartStock() {
     const uniqueIds = [...new Set(cart.map(item => item.id))];
     
     uniqueIds.forEach(id => {
-        const product = products.find(p => p.id === id);
-        const qtyInCart = cart.filter(c => c.id === id).length;
+        const product = products.find(p => p.id == id);
+        const qtyInCart = cart.filter(c => c.id == id).length;
         
         if (!product) {
             // Se o produto foi deletado do sistema, remove da sacola
-            cart = cart.filter(c => c.id !== id);
+            cart = cart.filter(c => c.id != id);
             changed = true;
         } else if (qtyInCart > product.stock) {
             // Se a pessoa tem 3 na sacola, mas agora só tem 1 no estoque
             // Remove tudo e adiciona de volta apenas o que tem disponível
-            cart = cart.filter(c => c.id !== id);
+            cart = cart.filter(c => c.id != id);
             for(let i = 0; i < product.stock; i++) {
                 cart.push(product);
             }
@@ -424,7 +466,7 @@ function checkout() {
     let total = 0;
     cart.forEach(item => {
         // Busca o produto original para garantir o preço atual (segurança contra manipulação)
-        const product = products.find(p => p.id === item.id) || item;
+        const product = products.find(p => p.id == item.id) || item;
         message += `- ${product.title}: R$ ${product.price.toFixed(2).replace('.', ',')}\n`;
         total += product.price;
     });
@@ -603,7 +645,7 @@ function notifyBulkProducts(newProducts) {
 }
 
 function toggleSold(id) {
-    const product = products.find(p => p.id === id);
+    const product = products.find(p => p.id == id);
     if(product) {
         // Se tiver estoque, zera (marca como vendido). Se for 0, volta pra 1 (disponível).
         if (product.stock > 0) {
@@ -618,11 +660,10 @@ function toggleSold(id) {
 }
 
 function deleteProduct(id) {
-    if(confirm('Tem certeza que quer deletar esse mimo?')) {
-        products = products.filter(p => p.id !== id);
-        saveToStorage();
-        renderProducts(products);
-    }
+    products = products.filter(p => p.id != id);
+    saveToStorage();
+    renderProducts(products);
+    showToast('Item apagado! Gere o código novo para salvar de verdade. 💾', 'normal');
 }
 
 function saveToStorage() {
@@ -663,7 +704,7 @@ function checkoutOwner(owner) {
     
     ownerItems.forEach(item => {
         // Busca o produto original para garantir o preço
-        const product = products.find(p => p.id === item.id) || item;
+        const product = products.find(p => p.id == item.id) || item;
         message += `- ${product.title}: R$ ${product.price.toFixed(2).replace('.', ',')}\n`;
         subtotal += product.price;
     });
@@ -715,6 +756,40 @@ function setupBackToTop() {
     btn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+}
+
+// --- Funções de Exportação (Gerador de Código) ---
+
+function openExportModal() {
+    const exportModal = document.getElementById('export-modal');
+    const textarea = document.getElementById('export-text');
+    
+    // Incrementa a versão automaticamente para forçar atualização nos clientes
+    const newVersion = (typeof DATA_VERSION !== 'undefined' ? DATA_VERSION : 1) + 1;
+    
+    // Formata a lista de produtos atual como texto de código
+    const jsonProducts = JSON.stringify(products, null, 4);
+    
+    const code = `const defaultProducts = ${jsonProducts};
+
+// --- CONTROLE DE VERSÃO ---
+// IMPORTANTE: Mude esse número (+1) sempre que você editar a lista acima (defaultProducts).
+// Isso avisa o navegador das clientes que tem novidade e força a atualização!
+const DATA_VERSION = ${newVersion};`;
+
+    textarea.value = code;
+    exportModal.style.display = 'flex';
+}
+
+function closeExportModal() {
+    document.getElementById('export-modal').style.display = 'none';
+}
+
+function copyExportCode() {
+    const textarea = document.getElementById('export-text');
+    textarea.select();
+    document.execCommand('copy');
+    showToast('Código copiado! Agora cole no script.js 📋', 'success');
 }
 
 // Iniciar aplicação
