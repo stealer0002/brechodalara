@@ -53,10 +53,26 @@ function fetchContentfulProducts() {
     .catch((error) => {
         console.error("Erro ao buscar do Contentful:", error);
         productGrid.innerHTML = `
-            <div style="text-align:center; width:100%;">
+            <div id="error-container" style="text-align:center; width:100%;">
                 <p>Ops! Não consegui carregar os produtos. :(</p>
                 <p style="color:red; font-size:0.8rem; margin-top:10px;">Erro: ${error.message || JSON.stringify(error)}</p>
             </div>`;
+            
+        // Tenta descobrir o ID correto automaticamente para te ajudar
+        client.getContentTypes()
+            .then(response => {
+                const availableIds = response.items.map(t => t.sys.id).join(' ou ');
+                const container = document.getElementById('error-container');
+                if(container && availableIds) {
+                    container.innerHTML += `
+                        <div style="margin-top:15px; padding:10px; background:#fff3cd; color:#856404; border-radius:5px; display:inline-block;">
+                            <strong>Descobri o problema!</strong><br>
+                            O ID que você colocou no código é 'product', mas o correto é: <br>
+                            <code style="background:#fff; padding:2px 5px; font-weight:bold; font-size:1.2rem;">${availableIds}</code><br>
+                            <small>(Volte no arquivo contentful-logic.js e troque 'product' por esse nome acima)</small>
+                        </div>`;
+                }
+            });
     });
 }
 
