@@ -37,7 +37,8 @@ function fetchContentfulProducts() {
                 // Pega todas as imagens se existirem, senão array vazio
                 images: fields.images ? fields.images.map(img => img.fields.file.url) : [],
                 stock: typeof fields.stock === 'number' ? fields.stock : 1,
-                sold: fields.stock === 0
+                sold: fields.stock === 0,
+                owner: fields.owner ? fields.owner.toLowerCase() : 'lara' // Padrão é Lara se esquecer de preencher
             };
         });
 
