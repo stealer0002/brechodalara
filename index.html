@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Contentful SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
 </head>
 <body>
 
@@ -140,6 +142,12 @@
                     <h3 style="margin: 0;">Novos Garimpos ✨</h3>
                     <button onclick="logout()" class="btn-admin" style="background: #ff6b6b; color: white; margin: 0; padding: 5px 10px; font-size: 0.9rem;">Sair 🚪</button>
                 </div>
+                
+                <div style="background: #fff3cd; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #856404; border: 1px solid #ffeeba;">
+                    ⚠️ <strong>Atenção:</strong> Alterações aqui (lixeira/adicionar) só aparecem pra você. <br>
+                    Para salvar de verdade, clique no botão verde abaixo, copie o código e atualize o arquivo <code>script.js</code>.
+                </div>
+
                 <form class="admin-form" onsubmit="handleBulkAddProduct(event)">
                     <div id="products-container" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
                         <!-- Primeiro item padrão -->
@@ -162,6 +170,11 @@
                     <button type="button" onclick="addNewProductField()" class="btn-admin" style="background: #6c5ce7; margin-bottom: 10px;">+ Adicionar outra peça</button>
                     <button type="submit" class="btn-admin">Salvar Tudinho</button>
                 </form>
+
+                <hr style="margin: 20px 0; border: 1px dashed #ccc;">
+                <div style="text-align: center;">
+                    <button onclick="openExportModal()" class="btn-admin" style="background: #00b894; color: white; width: 100%; padding: 12px;">💾 Gerar Código para Atualizar Site</button>
+                </div>
             </div>
         </div>
     </div>
@@ -194,6 +207,22 @@
         </div>
     </div>
 
+    <!-- Modal Exportação (Gerador de Código) -->
+    <div id="export-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px; text-align: left;">
+            <span onclick="closeExportModal()" style="float:right; cursor:pointer; font-size:1.5rem;">&times;</span>
+            <h3 style="text-align: center;">Atualizar Site 🚀</h3>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+                1. Clique em <strong>Copiar</strong> abaixo.<br>
+                2. Abra o arquivo <code>script.js</code> no seu computador.<br>
+                3. <strong>Substitua</strong> toda a parte inicial (lista de produtos e versão) pelo texto copiado.<br>
+                4. Salve e suba no Netlify!
+            </p>
+            <textarea id="export-text" style="width: 100%; height: 250px; font-family: monospace; font-size: 0.8rem; padding: 10px; border: 2px solid #ddd; border-radius: 8px; white-space: pre;" readonly></textarea>
+            <button onclick="copyExportCode()" class="btn-admin" style="background: #0984e3; color: white; margin-top: 10px; width: 100%;">Copiar Código 📋</button>
+        </div>
+    </div>
+
     <!-- Container de Notificações -->
     <div id="toast-container"></div>
 
@@ -201,5 +230,6 @@
     <button id="back-to-top" title="Voltar ao topo">⬆️</button>
 
     <script src="script.js"></script>
+    <script src="contentful-logic.js"></script>
 </body>
 </html>
