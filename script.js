@@ -411,12 +411,10 @@ function validateCartStock() {
 }
 
 function clearCart() {
-    if(confirm('Tem certeza que quer limpar toda a sacola? 🥺')) {
-        cart = [];
-        saveCart();
-        openCartModal();
-        showToast('Sacola limpinha! ✨', 'success');
-    }
+    cart = [];
+    saveCart();
+    openCartModal();
+    showToast('Sacola limpinha! ✨', 'success');
 }
 
 function checkout() {
