@@ -458,10 +458,17 @@ async function handleLogin(e) {
         try {
             passHash = await sha256(pass);
         } catch (e) {
-            console.log('Modo local detectado.');
+            console.log('Erro de criptografia (Modo local ou sem HTTPS):', e);
         }
     }
     
+    // Fallback de Segurança:
+    // Se a criptografia falhar (comum em conexões HTTP ou local), verificamos a senha manualmente.
+    // Isso resolve o problema de login no Netlify se o SSL ainda não estiver ativo ou falhar.
+    if (passHash === '' && pass === 'pudin123') {
+        passHash = ADMIN_HASH;
+    }
+
     // Aceita apenas se o hash bater (Senha: pudin123)
     if(passHash === ADMIN_HASH) { 
         isAdmin = true;
@@ -474,6 +481,7 @@ async function handleLogin(e) {
         renderProducts(products);
         showToast('Bem-vinda, chefa! 👑', 'success');
     } else {
+        console.log('Debug Login - Senha:', pass, 'Hash:', passHash);
         showToast('Senha errada, bestie! 🚫', 'error');
     }
 }
