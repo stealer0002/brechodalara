@@ -12,7 +12,7 @@ const EXTERNAL_DATA_URL = "";
 // Isso avisa o navegador das clientes que tem novidade e força a atualização!
 const DATA_VERSION = 1; 
 
-let products = []; // Será preenchido no init()
+window.products = []; // Define como global para o Contentful acessar
 
 let cart = JSON.parse(localStorage.getItem('pudin_cart')) || [];
 let isAdmin = sessionStorage.getItem('pudin_is_admin') === 'true';
@@ -367,6 +367,9 @@ function removeProductFromCart(id) {
 }
 
 function validateCartStock() {
+    // Se os produtos ainda não carregaram, não faz nada (evita limpar a sacola sem querer)
+    if (!products || products.length === 0) return;
+
     let changed = false;
     const uniqueIds = [...new Set(cart.map(item => item.id))];
     
