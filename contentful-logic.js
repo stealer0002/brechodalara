@@ -1,7 +1,7 @@
 // Configuração do Contentful
 // Substitua as chaves abaixo pelas suas chaves reais do Contentful (Settings > API Keys)
-const SPACE_ID = 'SEU_SPACE_ID_AQUI';
-const ACCESS_TOKEN = 'SEU_ACCESS_TOKEN_AQUI';
+const SPACE_ID = 'zgsmx87w9rcy';
+const ACCESS_TOKEN = 'Zh_LZ-wsXPs9Mhkiiwm9q5ARJB44dSB-IIhyWm0UstE';
 
 const client = contentful.createClient({
     space: SPACE_ID,
@@ -51,4 +51,5 @@ function fetchContentfulProducts() {
 }
 
 // Inicia a busca assim que a página carregar
+
 document.addEventListener('DOMContentLoaded', fetchContentfulProducts);
