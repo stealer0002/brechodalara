@@ -16,7 +16,7 @@ function fetchContentfulProducts() {
     productGrid.innerHTML = '<p style="text-align:center; width:100%; margin-top:20px;">Carregando mimos do Contentful... 🍮</p>';
 
     client.getEntries({
-        content_type: 'product', // Certifique-se que o ID do Content Model é 'product'
+        content_type: 'pudinclotches', // ID corrigido conforme o Contentful
         order: '-sys.createdAt'  // Mostra os mais recentes primeiro
     })
     .then((response) => {
