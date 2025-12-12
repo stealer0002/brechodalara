@@ -49,6 +49,11 @@ function fetchContentfulProducts() {
         // Isso garante que os filtros, busca e botão de carrinho funcionem!
         if (typeof renderProducts === 'function') {
             renderProducts(window.products);
+            // Valida a sacola agora que temos os dados reais de estoque
+            if (typeof validateCartStock === 'function') {
+                validateCartStock();
+                updateCartCounter();
+            }
         }
     })
     .catch((error) => {
