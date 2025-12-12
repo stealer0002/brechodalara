@@ -462,15 +462,10 @@ async function handleLogin(e) {
         }
     }
     
-    // Fallback de Segurança:
-    // Se a criptografia falhar (comum em conexões HTTP ou local), verificamos a senha manualmente.
-    // Isso resolve o problema de login no Netlify se o SSL ainda não estiver ativo ou falhar.
-    if (passHash === '' && pass === 'pudin123') {
-        passHash = ADMIN_HASH;
-    }
-
-    // Aceita apenas se o hash bater (Senha: pudin123)
-    if(passHash === ADMIN_HASH) { 
+    // Verificação de Segurança Simplificada:
+    // Verifica o hash OU a senha direta. Isso garante que o login funcione 
+    // mesmo se o navegador bloquear a criptografia no Netlify/Celular.
+    if(passHash === ADMIN_HASH || pass === 'pudin123') { 
         isAdmin = true;
         currentAdminUser = userSelect.value;
         
