@@ -1,7 +1,7 @@
 // Configuração do Contentful
 // Substitua as chaves abaixo pelas suas chaves reais do Contentful (Settings > API Keys)
-const SPACE_ID = 'zgsmx87w9rcy';
-const ACCESS_TOKEN = 'Zh_LZ-wsXPs9Mhkiiwm9q5ARJB44dSB-IIhyWm0UstE';
+const SPACE_ID = 'zgsmx87w9rcy';      // Ex: 'k8s7...'
+const ACCESS_TOKEN = 'Zh_LZ-wsXPs9Mhkiiwm9q5ARJB44dSB-IIhyWm0UstE';    // Ex: 'cfp-...'
 
 const client = contentful.createClient({
     space: SPACE_ID,
@@ -26,7 +26,8 @@ function fetchContentfulProducts() {
             return {
                 id: item.sys.id, // ID único do Contentful (ex: "4a2B...")
                 title: fields.title,
-                category: fields.category || 'outros',
+                // Força a categoria para minúsculo para garantir que os filtros funcionem
+                category: fields.category ? fields.category.toLowerCase() : 'outros',
                 price: fields.price || 0,
                 // Pega todas as imagens se existirem, senão array vazio
                 images: fields.images ? fields.images.map(img => img.fields.file.url) : [],
@@ -51,5 +52,4 @@ function fetchContentfulProducts() {
 }
 
 // Inicia a busca assim que a página carregar
-
 document.addEventListener('DOMContentLoaded', fetchContentfulProducts);
