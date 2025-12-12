@@ -1,44 +1,5 @@
 const defaultProducts = [
-    // --- ÁREA DE CADASTRO DE PRODUTOS (VITRINE OFICIAL) ---
-    // Como este é um site estático, adicione suas peças reais aqui.
-    // O Painel Admin serve apenas para testes locais no seu computador.
-    // Para adicionar imagens, use URLs ou caminhos relativos (ex: './img/foto1.jpg')
-    {
-        id: 1,
-        title: "Corset Fada 🧚‍♀️",
-        category: "roupas",
-        price: 129.90,
-        images: ["https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=500&q=60", "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=500&q=60"],
-        sold: false,
-        stock: 1
-    },
-    {
-        id: 2,
-        title: "Óculos Matrix Y2K",
-        category: "acessorios",
-        price: 55.00,
-        images: ["https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=500&q=60"],
-        sold: false,
-        stock: 1
-    },
-    {
-        id: 3,
-        title: "Coturno Tratorado",
-        category: "calcados",
-        price: 180.00,
-        images: ["https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=500&q=60"],
-        sold: false,
-        stock: 1
-    },
-    {
-        id: 4,
-        title: "Saia Xadrez 90s",
-        category: "roupas",
-        price: 75.00,
-        images: ["https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?auto=format&fit=crop&w=500&q=60"],
-        sold: false,
-        stock: 1
-    }
+    // Deixe vazio para não aparecer nada antes do Contentful carregar
 ];
 
 // --- CONFIGURAÇÃO DE AUTOMAÇÃO (OPCIONAL) ---
