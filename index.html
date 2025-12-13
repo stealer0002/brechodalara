@@ -21,7 +21,7 @@
                 <li><a href="#shop">Garimpos</a></li>
                 <li><a href="#feedbacks">Luv</a></li>
                 <!-- ATENÇÃO: Coloque o link real do seu grupo do WhatsApp abaixo -->
-                <li><a href="https://chat.whatsapp.com/SEU_LINK_AQUI" target="_blank" rel="noopener noreferrer" class="group-link">Grupo VIP ✨</a></li>
+                <li><a href="https://chat.whatsapp.com/EL3Td2MCHDwFDeTfhOWiN1" target="_blank" rel="noopener noreferrer" class="group-link">Grupo VIP ✨</a></li>
                 <li><a href="#" id="cart-btn">Sacola (0)</a></li>
             </ul>
         </nav>
@@ -78,13 +78,13 @@
         <div class="instagram-highlights">
             <a href="https://www.instagram.com/stories/highlights/18000630719560226/" target="_blank" rel="noopener noreferrer" class="highlight-item">
                 <div class="highlight-circle">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=100&q=60" alt="Clientes">
+                    <img src="pudin1.jpeg" alt="Clientes">
                 </div>
                 <span>Clientes</span>
             </a>
             <a href="https://www.instagram.com/stories/highlights/18128511319392304/" target="_blank" rel="noopener noreferrer" class="highlight-item">
                 <div class="highlight-circle">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=100&q=60" alt="Mimos">
+                    <img src="pudin2.jpeg" alt="Mimos">
                 </div>
                 <span>Mimos</span>
             </a>
@@ -93,9 +93,9 @@
         <!-- Vídeo Direto (Exemplo) -->
         <div class="video-section">
             <p style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 10px;">Vejam como eu garimpo! 🎥</p>
-            <video controls class="styled-video" poster="https://images.unsplash.com/photo-1550614000-4b9519e02a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
+            <video controls class="styled-video">
                 <source src="garimpo.mp4" type="video/mp4">
-                Seu navegador não suporta vídeos :(
+                Seu navegador não suporta vídeos.
             </video>
         </div>
 
@@ -113,71 +113,10 @@
     </section>
 
     <footer>
-        <p>Feito com <span id="open-admin" style="cursor: default;">💖</span> por <strong>Pudin Clothes</strong> | @pudinclothes</p>
+        <p>Feito com <span>💖</span> por <strong>Pudin Clothes</strong> | @pudinclothes</p>
         <p style="font-size: 0.8rem; margin-top: 5px;">Enviamos amor em cada pacotinho 💌</p>
+        <p style="font-size: 0.8rem; margin-top: 5px;">Contato: Lara (11) 99333-6808 | Monalisa (11) 97487-1916</p>
     </footer>
-
-    <!-- Modal Admin -->
-    <div id="admin-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span onclick="closeModal()" style="float:right; cursor:pointer; font-size:1.5rem;">&times;</span>
-            
-            <!-- Tela de Login -->
-            <div id="login-screen">
-                <h3>Login da Chefa 👑</h3>
-                <form class="admin-form" onsubmit="handleLogin(event)">
-                    <select id="admin-user" required aria-label="Selecionar usuário">
-                        <option value="" disabled selected>Quem é você? 💖</option>
-                        <option value="lara">Lara 🧚‍♀️</option>
-                        <option value="monalisa">Monalisa 🎨</option>
-                    </select>
-                    <input type="password" id="admin-pass" placeholder="Senha secreta..." required aria-label="Senha">
-                    <button type="submit" class="btn-admin">Entrar</button>
-                </form>
-            </div>
-
-            <!-- Tela de Adicionar Produto (Oculta inicialmente) -->
-            <div id="admin-panel" style="display:none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="margin: 0;">Novos Garimpos ✨</h3>
-                    <button onclick="logout()" class="btn-admin" style="background: #ff6b6b; color: white; margin: 0; padding: 5px 10px; font-size: 0.9rem;">Sair 🚪</button>
-                </div>
-                
-                <div style="background: #fff3cd; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #856404; border: 1px solid #ffeeba;">
-                    ⚠️ <strong>Atenção:</strong> Alterações aqui (lixeira/adicionar) só aparecem pra você. <br>
-                    Para salvar de verdade, clique no botão verde abaixo, copie o código e atualize o arquivo <code>script.js</code>.
-                </div>
-
-                <form class="admin-form" onsubmit="handleBulkAddProduct(event)">
-                    <div id="products-container" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
-                        <!-- Primeiro item padrão -->
-                        <div class="product-entry" style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #ccc;">
-                            <input type="text" name="title" placeholder="Nome da peça" required style="margin-bottom: 10px;">
-                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                                <select name="category" style="flex: 1;">
-                                    <option value="roupas">Roupas</option>
-                                    <option value="acessorios">Acessórios</option>
-                                    <option value="calcados">Calçados</option>
-                                </select>
-                                <input type="number" name="price" placeholder="Preço" step="0.01" required style="flex: 1;">
-                                <input type="number" name="stock" placeholder="Qtd" min="1" value="1" required style="width: 80px;">
-                            </div>
-                            <label style="display:block; text-align:left; font-size:0.9rem; margin-bottom:5px;">Fotos:</label>
-                            <input type="file" name="images" accept="image/*" multiple required>
-                        </div>
-                    </div>
-                    
-                    <button type="button" onclick="addNewProductField()" class="btn-admin" style="background: #6c5ce7; margin-bottom: 10px;">+ Adicionar outra peça</button>
-                    <button type="submit" class="btn-admin">Salvar Tudinho</button>
-                </form>
-
-                <hr style="margin: 20px 0; border: 1px dashed #ccc;">
-                <div style="text-align: center;">
-                    <button onclick="openExportModal()" class="btn-admin" style="background: #00b894; color: white; width: 100%; padding: 12px;">💾 Gerar Código para Atualizar Site</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal Sacola -->
     <div id="cart-modal" class="modal-overlay">
@@ -204,22 +143,6 @@
                 <button onclick="finishCheckout()" class="btn-cta" style="background: #4CAF50; border-color: #45a049; font-size: 0.9rem;">Já comprei! Limpar 🛍️</button>
                 <button onclick="closeCheckoutModal()" class="btn-cta" style="background: #fff; color: var(--text-color); font-size: 0.9rem;">Ainda não</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal Exportação (Gerador de Código) -->
-    <div id="export-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px; text-align: left;">
-            <span onclick="closeExportModal()" style="float:right; cursor:pointer; font-size:1.5rem;">&times;</span>
-            <h3 style="text-align: center;">Atualizar Site 🚀</h3>
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
-                1. Clique em <strong>Copiar</strong> abaixo.<br>
-                2. Abra o arquivo <code>script.js</code> no seu computador.<br>
-                3. <strong>Substitua</strong> toda a parte inicial (lista de produtos e versão) pelo texto copiado.<br>
-                4. Salve e suba no Netlify!
-            </p>
-            <textarea id="export-text" style="width: 100%; height: 250px; font-family: monospace; font-size: 0.8rem; padding: 10px; border: 2px solid #ddd; border-radius: 8px; white-space: pre;" readonly></textarea>
-            <button onclick="copyExportCode()" class="btn-admin" style="background: #0984e3; color: white; margin-top: 10px; width: 100%;">Copiar Código 📋</button>
         </div>
     </div>
 

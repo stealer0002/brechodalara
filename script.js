@@ -15,25 +15,18 @@ const DATA_VERSION = 1;
 window.products = []; // Define como global para o Contentful acessar
 
 let cart = JSON.parse(localStorage.getItem('pudin_cart')) || [];
-let isAdmin = sessionStorage.getItem('pudin_is_admin') === 'true';
-let currentAdminUser = sessionStorage.getItem('pudin_admin_user') || '';
 let productIntervals = {}; // Armazena os timers do carrossel de imagens
-
-// ATENÇÃO: Autenticação Client-Side não é 100% segura. Use apenas para proteção básica da vitrine.
-// Hash SHA-256 para a senha "pudin123"
-const ADMIN_HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
 
 // ATENÇÃO: TROQUE PELOS NÚMEROS REAIS ANTES DE LANÇAR!
 // Formato: 55 + DDD + Número (sem espaços ou traços)
 const adminPhones = {
-    'lara': '5500000000000', 
-    'monalisa': '5500000000000'
+    'lara': '5511993336808', 
+    'monalisa': '5511974871916'
 };
 
 const gridElement = document.getElementById('product-grid');
 const filterButtons = document.querySelectorAll('.filter-btn');
 const searchInput = document.getElementById('search-input');
-const modal = document.getElementById('admin-modal');
 const cartModal = document.getElementById('cart-modal');
 
 async function init() {
@@ -44,12 +37,6 @@ async function init() {
     setupBackToTop();
     validateCartStock(); // Verifica a sacola assim que o site carrega
     updateCartCounter();
-    
-    // Configurar botão de abrir modal
-    document.getElementById('open-admin').addEventListener('click', () => {
-        modal.style.display = 'flex';
-        checkAdminUI();
-    });
 
     // Configurar botão da sacola
     document.getElementById('cart-btn').addEventListener('click', (e) => {
@@ -133,8 +120,6 @@ function renderProducts(list) {
                             ? `<button class="btn-add" disabled style="background: #ccc; cursor: not-allowed; border: 2px solid #999; color: #666; padding: 5px 15px; border-radius: 20px;">Já foi :(</button>`
                             : `<button class="btn-add" data-id="${product.id}" style="cursor: pointer; background: var(--accent-color); color: white; border: 2px solid var(--text-color); padding: 5px 15px; border-radius: 20px; font-weight: bold; box-shadow: 2px 2px 0px #333;">${btnText}</button>`
                         }
-                        ${isAdmin ? `<button onclick="toggleSold('${product.id}')" class="btn-toggle-sold" title="Marcar/Desmarcar Vendido">💲</button>` : ''}
-                        ${isAdmin ? `<button onclick="deleteProduct('${product.id}')" class="btn-delete" title="Excluir">🗑️</button>` : ''}
                     </div>
                 </div>
             </div>
@@ -227,19 +212,23 @@ function setupFilters() {
 }
 
 function addToCart(e) {
-    const id = e.target.dataset.id; // Removido parseInt para aceitar IDs do Contentful
-    const product = products.find(p => p.id == id);
+    // Use currentTarget para garantir que pegamos o botão com o data-id
+    const btn = e.currentTarget;
+    const id = btn.dataset.id; 
     
-    const qtyInCart = cart.filter(i => i.id == id).length;
+    // Converte para String para garantir que ache, seja numero ou texto
+    const product = products.find(p => String(p.id) === String(id));
+    
+    const qtyInCart = cart.filter(i => String(i.id) === String(id)).length;
+    const stock = product ? parseInt(product.stock) : 0;
 
     // Verifica se ainda tem estoque disponível
-    if(product && product.stock > qtyInCart) {
+    if(product && stock > qtyInCart) {
         cart.push(product);
         saveCart();
         showToast('Adicionado à sacola! 💖', 'success');
 
         // Atualiza o texto do botão visualmente
-        const btn = e.target;
         const newQty = qtyInCart + 1;
         btn.innerText = `Eu quero! (${newQty})`;
     } else {
@@ -419,208 +408,6 @@ function checkout() {
     window.open(`https://wa.me/${adminPhones['lara']}?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// --- Funções de Admin ---
-
-function closeModal() {
-    modal.style.display = 'none';
-}
-
-async function handleLogin(e) {
-    e.preventDefault();
-    const pass = document.getElementById('admin-pass').value.trim(); // Remove espaços extras
-    const userSelect = document.getElementById('admin-user');
-    
-    if (!userSelect.value) {
-        showToast('Quem é você? Selecione na lista! 💖', 'error');
-        return;
-    }
-    
-    let passHash = '';
-    
-    // Verifica suporte a criptografia (evita erro em file://)
-    if (window.crypto && window.crypto.subtle) {
-        try {
-            passHash = await sha256(pass);
-        } catch (e) {
-            console.log('Erro de criptografia (Modo local ou sem HTTPS):', e);
-        }
-    }
-    
-    // Verificação de Segurança Simplificada:
-    // Verifica o hash OU a senha direta. Isso garante que o login funcione 
-    // mesmo se o navegador bloquear a criptografia no Netlify/Celular.
-    if(passHash === ADMIN_HASH || pass === 'pudin123') { 
-        isAdmin = true;
-        currentAdminUser = userSelect.value;
-        
-        sessionStorage.setItem('pudin_is_admin', 'true');
-        sessionStorage.setItem('pudin_admin_user', currentAdminUser);
-
-        checkAdminUI();
-        renderProducts(products);
-        showToast('Bem-vinda, chefa! 👑', 'success');
-    } else {
-        console.log('Debug Login - Senha:', pass, 'Hash:', passHash);
-        showToast('Senha errada, bestie! 🚫', 'error');
-    }
-}
-
-function logout() {
-    isAdmin = false;
-    currentAdminUser = '';
-    sessionStorage.removeItem('pudin_is_admin');
-    sessionStorage.removeItem('pudin_admin_user');
-    
-    document.getElementById('login-screen').style.display = 'block';
-    document.getElementById('admin-panel').style.display = 'none';
-    document.getElementById('admin-pass').value = ''; // Limpa a senha
-    
-    renderProducts(products);
-    showToast('Saiu da conta! 👋', 'success');
-}
-
-async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function checkAdminUI() {
-    if(isAdmin) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-    }
-}
-
-function addNewProductField() {
-    const container = document.getElementById('products-container');
-    const div = document.createElement('div');
-    div.className = 'product-entry';
-    div.style.cssText = 'background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #ccc; position: relative;';
-    
-    div.innerHTML = `
-        <span onclick="this.parentElement.remove()" style="position:absolute; top:5px; right:10px; cursor:pointer; color:red; font-weight:bold; font-size: 1.2rem;">&times;</span>
-        <input type="text" name="title" placeholder="Nome da peça" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <select name="category" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <option value="roupas">Roupas</option>
-                <option value="acessorios">Acessórios</option>
-                <option value="calcados">Calçados</option>
-            </select>
-            <input type="number" name="price" placeholder="Preço" step="0.01" required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-            <input type="number" name="stock" placeholder="Qtd" min="1" value="1" required style="width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-        </div>
-        <label style="display:block; text-align:left; font-size:0.9rem; margin-bottom:5px;">Fotos:</label>
-        <input type="file" name="images" accept="image/*" multiple required style="width: 100%;">
-    `;
-    
-    container.appendChild(div);
-}
-
-async function handleBulkAddProduct(e) {
-    e.preventDefault();
-    
-    const entries = document.querySelectorAll('.product-entry');
-    const newProducts = [];
-    
-    for (const entry of entries) {
-        const title = entry.querySelector('input[name="title"]').value;
-        const category = entry.querySelector('select[name="category"]').value;
-        const priceInput = entry.querySelector('input[name="price"]');
-        const stockInput = entry.querySelector('input[name="stock"]');
-        const fileInput = entry.querySelector('input[name="images"]');
-        
-        if (title && priceInput.value && fileInput.files.length > 0 && stockInput.value) {
-            const imagesBase64 = await readFiles(fileInput.files);
-            
-            newProducts.push({
-                id: Date.now() + Math.floor(Math.random() * 1000), // ID único
-                title: title,
-                category: category,
-                price: parseFloat(priceInput.value.replace(',', '.')),
-                stock: parseInt(stockInput.value),
-                images: imagesBase64,
-                sold: false,
-                owner: currentAdminUser
-            });
-        }
-    }
-
-    if (newProducts.length > 0) {
-        products.unshift(...newProducts);
-        saveToStorage();
-        renderProducts(products);
-        notifyBulkProducts(newProducts);
-        
-        // Resetar formulário
-        const container = document.getElementById('products-container');
-        container.innerHTML = ''; 
-        addNewProductField(); // Adiciona um campo limpo
-        
-        showToast(`${newProducts.length} peças adicionadas! ✨`, 'success');
-    }
-}
-
-function readFiles(files) {
-    return Promise.all(Array.from(files).map(file => {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.readAsDataURL(file);
-        });
-    }));
-}
-
-function notifyBulkProducts(newProducts) {
-    const phone = adminPhones[currentAdminUser];
-    
-    if (phone) {
-        let message = `✨ *Novos Garimpos Adicionados!* ✨\n\n`;
-        
-        newProducts.forEach(p => {
-            message += `👗 *${p.title}*\n` +
-                       `💰 R$ ${p.price.toFixed(2).replace('.', ',')} | 📂 ${p.category}\n` +
-                       `------------------------------\n`;
-        });
-        
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-    }
-}
-
-function toggleSold(id) {
-    const product = products.find(p => p.id == id);
-    if(product) {
-        // Se tiver estoque, zera (marca como vendido). Se for 0, volta pra 1 (disponível).
-        if (product.stock > 0) {
-            product.stock = 0;
-        } else {
-            product.stock = 1;
-        }
-        product.sold = (product.stock === 0); // Mantém compatibilidade
-        saveToStorage();
-        renderProducts(products);
-    }
-}
-
-function deleteProduct(id) {
-    products = products.filter(p => p.id != id);
-    saveToStorage();
-    renderProducts(products);
-    showToast('Item apagado! Gere o código novo para salvar de verdade. 💾', 'normal');
-}
-
-function saveToStorage() {
-    try {
-        localStorage.setItem('pudin_products', JSON.stringify(products));
-    } catch (e) {
-        if (e.name === 'QuotaExceededError') {
-            showToast('Erro: Armazenamento cheio! Use imagens menores ou URLs.', 'error');
-        }
-        console.error('Erro ao salvar:', e);
-    }
-}
-
 function showToast(message, type = 'normal') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -700,40 +487,6 @@ function setupBackToTop() {
     btn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-}
-
-// --- Funções de Exportação (Gerador de Código) ---
-
-function openExportModal() {
-    const exportModal = document.getElementById('export-modal');
-    const textarea = document.getElementById('export-text');
-    
-    // Incrementa a versão automaticamente para forçar atualização nos clientes
-    const newVersion = (typeof DATA_VERSION !== 'undefined' ? DATA_VERSION : 1) + 1;
-    
-    // Formata a lista de produtos atual como texto de código
-    const jsonProducts = JSON.stringify(products, null, 4);
-    
-    const code = `const defaultProducts = ${jsonProducts};
-
-// --- CONTROLE DE VERSÃO ---
-// IMPORTANTE: Mude esse número (+1) sempre que você editar a lista acima (defaultProducts).
-// Isso avisa o navegador das clientes que tem novidade e força a atualização!
-const DATA_VERSION = ${newVersion};`;
-
-    textarea.value = code;
-    exportModal.style.display = 'flex';
-}
-
-function closeExportModal() {
-    document.getElementById('export-modal').style.display = 'none';
-}
-
-function copyExportCode() {
-    const textarea = document.getElementById('export-text');
-    textarea.select();
-    document.execCommand('copy');
-    showToast('Código copiado! Agora cole no script.js 📋', 'success');
 }
 
 // Iniciar aplicação
