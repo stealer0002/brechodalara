@@ -98,6 +98,7 @@ function renderProducts(list) {
 
         // Define o nome bonitinho para exibir
         const ownerDisplay = product.owner === 'monalisa' ? 'Monalisa 🎨' : 'Lara 🧚‍♀️';
+        const ownerClass = product.owner === 'monalisa' ? 'owner-monalisa' : 'owner-lara';
 
         // Gera HTML das imagens
         const imagesHtml = product.images.map((img, index) => 
@@ -112,7 +113,7 @@ function renderProducts(list) {
         
         card.innerHTML = `
             ${isSold ? '<div class="sold-badge">ESGOTADO</div>' : ''}
-            <div class="owner-tag" style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #333;">${ownerDisplay}</div>
+            <div class="owner-tag ${ownerClass}">${ownerDisplay}</div>
             <div class="image-container" id="slider-${product.id}">
                 ${imagesHtml}
                 ${sliderControls}
