@@ -24,6 +24,12 @@ const adminPhones = {
     'monalisa': '5511974871916'
 };
 
+// Variações de apelidos carinhosos para não ficar repetitivo
+const affectionateTerms = ['pudin', 'docinho', 'lindeza', 'chuchu', 'flor', 'amiga'];
+function getRandomTerm() {
+    return affectionateTerms[Math.floor(Math.random() * affectionateTerms.length)];
+}
+
 const gridElement = document.getElementById('product-grid');
 const filterButtons = document.querySelectorAll('.filter-btn');
 const searchInput = document.getElementById('search-input');
@@ -232,7 +238,7 @@ function addToCart(e) {
     if(product && stock > qtyInCart) {
         cart.push(product);
         saveCart();
-        showToast('Adicionado à sacola! 💖', 'success');
+        showToast(`Adicionado à sacola, ${getRandomTerm()}! 💖`, 'success');
 
         // Atualiza o texto do botão visualmente
         const newQty = qtyInCart + 1;
@@ -264,7 +270,7 @@ function openCartModal() {
     container.innerHTML = '';
     
     if(cart.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 20px;">Sua sacola está vazia, bestie! 😢</p>';
+        container.innerHTML = `<p style="text-align:center; padding: 20px;">Sua sacola está vazia, ${getRandomTerm()}! 😢</p>`;
         footer.innerHTML = '<div class="cart-total">Total: <span>R$ 0,00</span></div>';
         return;
     }
@@ -395,7 +401,7 @@ function clearCart() {
     cart = [];
     saveCart();
     openCartModal();
-    showToast('Sacola limpinha! ✨', 'success');
+    showToast(`Sacola limpinha, ${getRandomTerm()}! ✨`, 'success');
 }
 
 function checkout() {
@@ -476,7 +482,7 @@ function finishCheckout() {
     saveCart();
     closeCheckoutModal();
     closeCartModal();
-    showToast('Oba! Compra finalizada! 🎉', 'success');
+    showToast(`Oba! Compra finalizada, ${getRandomTerm()}! 🎉`, 'success');
 }
 
 function setupBackToTop() {
