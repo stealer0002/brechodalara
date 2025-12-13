@@ -19,6 +19,24 @@ body {
     line-height: 1.6;
 }
 
+/* Barra de Anúncios */
+.announcement-bar {
+    background-color: var(--accent-color);
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    font-family: var(--font-body);
+    animation: pulseAttention 2s infinite;
+}
+
+@keyframes pulseAttention {
+    0% { background-color: var(--accent-color); }
+    50% { background-color: #ff6b6b; } /* Rosa mais intenso para chamar atenção */
+    100% { background-color: var(--accent-color); }
+}
+
 /* Header */
 header {
     background-color: #fff;
@@ -84,6 +102,12 @@ nav a:hover { color: var(--accent-color); }
     text-shadow: 3px 3px 0px #fff;
 }
 
+/* Garante que o conteúdo da capa fique acima de qualquer overlay acidental */
+.hero-content {
+    position: relative;
+    z-index: 10;
+}
+
 .btn-cta {
     background-color: var(--accent-color);
     color: white;
@@ -101,6 +125,21 @@ nav a:hover { color: var(--accent-color); }
 .btn-cta:hover {
     transform: translate(2px, 2px);
     box-shadow: 2px 2px 0px var(--text-color);
+}
+
+/* Animação para destacar o botão "Ver tudo" */
+@keyframes pulseBtn {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.hero .btn-cta {
+    animation: pulseBtn 2s infinite ease-in-out;
+}
+
+.hero .btn-cta:hover {
+    animation: none; /* Pausa a animação para o efeito de clique funcionar */
 }
 
 /* Info Bar */
@@ -172,6 +211,25 @@ nav a:hover { color: var(--accent-color); }
     box-shadow: 2px 2px 0px var(--text-color);
 }
 
+.filter-btn.size-btn {
+    font-size: 1rem;
+    padding: 5px 15px; /* Botões de tamanho um pouco menores */
+}
+
+/* Menu de Tamanhos */
+.size-filter-menu {
+    max-width: 400px;
+    margin: 20px auto 0 auto; /* Centraliza o menu */
+}
+
+.size-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
 .section-title {
     text-align: center;
     margin-bottom: 2rem;
@@ -238,6 +296,23 @@ nav a:hover { color: var(--accent-color); }
     z-index: 2; /* Garante que a imagem ativa fique por cima dos outros elementos, mas abaixo dos botões */
 }
 
+/* Badge de Novidade */
+.new-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px; /* Fica no lugar do sold badge se não estiver vendido */
+    background: #00b894; /* Verde Água */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    transform: rotate(15deg);
+    box-shadow: 2px 2px 0px #333;
+    z-index: 9;
+}
+
 .slider-btn {
     position: absolute;
     top: 50%;
@@ -279,6 +354,48 @@ nav a:hover { color: var(--accent-color); }
     font-size: 0.85rem;
 }
 
+/* --- Seção Como Comprar --- */
+.how-to-buy-section {
+    background-color: var(--secondary-color); /* Fundo Amarelinho */
+    padding: 3rem 1.5rem;
+    text-align: center;
+    border-top: 3px solid var(--text-color);
+}
+
+.steps-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.step-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 15px;
+    border: 2px solid var(--text-color);
+    width: 100%;
+    max-width: 300px;
+    position: relative;
+    box-shadow: 4px 4px 0px var(--primary-color);
+}
+
+.step-number {
+    background: var(--accent-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    border: 2px solid var(--text-color);
+    margin: 0 auto 15px auto;
+}
+
 /* Etiquetas de Dona (Owner Tags) */
 .owner-tag {
     position: absolute;
@@ -302,6 +419,31 @@ nav a:hover { color: var(--accent-color); }
 .owner-monalisa {
     background-color: #feca57; /* Amarelo Solar */
     color: white;
+}
+
+/* --- FAQ (Acordeão) --- */
+details {
+    background: #fff;
+    border: 2px solid var(--text-color);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--secondary-color);
+    transition: all 0.2s;
+}
+
+details[open] {
+    box-shadow: 2px 2px 0px var(--secondary-color);
+    transform: translate(2px, 2px);
+}
+
+summary {
+    font-weight: bold;
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    list-style: none;
+    outline: none;
 }
 
 /* --- Estilos de Produto Vendido --- */
@@ -357,7 +499,8 @@ nav a:hover { color: var(--accent-color); }
     padding: 1.5rem;
     border-radius: 15px;
     border: 2px dashed var(--primary-color);
-    max-width: 300px;
+    max-width: 100%; /* Garante que não estoure em telas muito pequenas */
+    width: 350px;    /* Aumentado para facilitar a leitura dos textos */
     position: relative;
 }
 
@@ -454,6 +597,10 @@ footer {
         font-size: 1.8rem;
     }
 
+    nav {
+        width: 100%;
+    }
+
     nav ul {
         flex-wrap: wrap;
         justify-content: center;
@@ -480,9 +627,22 @@ footer {
         min-width: 85vw; /* O card ocupa 85% da largura da tela */
     }
 
-    /* Botões de filtro com espaço vertical caso quebrem linha */
+    /* Reordena layout no mobile: Vitrine -> Vídeo -> Filtros */
+    .container {
+        display: flex;
+        flex-direction: column;
+    }
+    .video-section { order: 2; }
+
+    /* Centraliza os botões de filtro e ajusta espaçamento */
+    .filters {
+        display: block;
+        text-align: center;
+        order: 3; /* Move para baixo, perto dos feedbacks */
+    }
     .filter-btn {
-        margin-bottom: 10px;
+        display: inline-block;
+        margin: 5px;
     }
 
     /* Modal ocupando quase toda a tela */
@@ -505,7 +665,7 @@ footer {
     .instagram-highlights {
         flex-wrap: nowrap;
         overflow-x: auto;
-        justify-content: flex-start;
+        justify-content: center;
         padding: 0 10px 10px 10px;
     }
     
@@ -577,12 +737,13 @@ footer {
 /* --- Toast Notifications --- */
 #toast-container {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    top: 100px; /* Movido para o topo para não cobrir o botão do WhatsApp */
+    right: 20px; 
     z-index: 2000;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    pointer-events: none; /* Permite clicar através do container invisível */
 }
 
 .toast {
@@ -595,6 +756,7 @@ footer {
     font-size: 1.2rem;
     min-width: 250px;
     animation: slideIn 0.3s ease-out forwards;
+    pointer-events: auto; /* Reativa o clique apenas na notificação quando ela aparecer */
 }
 
 .toast.success { border-color: #4CAF50; box-shadow: 4px 4px 0px #4CAF50; }
@@ -628,6 +790,59 @@ footer {
     transition: transform 0.2s;
 }
 #back-to-top:hover { transform: translateY(-3px); }
+
+/* --- Botão Flutuante WhatsApp --- */
+.floating-whatsapp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25D366; /* Verde WhatsApp */
+    color: white;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 3px 3px 0px var(--text-color);
+    z-index: 995;
+    text-decoration: none;
+    transition: transform 0.2s;
+    border: 2px solid var(--text-color);
+}
+.floating-whatsapp:hover {
+    transform: translateY(-5px) rotate(10deg);
+}
+
+/* --- Loader Pudim --- */
+.pudin-loader {
+    font-size: 4rem;
+    display: inline-block;
+    animation: pudinShake 1s infinite ease-in-out;
+}
+@keyframes pudinShake {
+    0% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
+    100% { transform: rotate(-15deg); }
+}
+
+/* --- Global Loader --- */
+#global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+    z-index: 9999; /* Fica acima de tudo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease-out;
+    color: white;
+}
 
 /* --- Cart Styles --- */
 .cart-content {
@@ -683,3 +898,42 @@ footer {
     color: var(--text-color);
     margin-bottom: 10px;
 }
+
+/* --- Transição Cinemática de Entrada --- */
+/* Prepara os elementos para entrarem deslizando (estado inicial invisível) */
+body:not(.site-loaded) .announcement-bar,
+body:not(.site-loaded) header,
+body:not(.site-loaded) .hero,
+body:not(.site-loaded) .infos-bar,
+body:not(.site-loaded) main,
+body:not(.site-loaded) .how-to-buy-section,
+body:not(.site-loaded) .faq-section,
+body:not(.site-loaded) .feedbacks-section,
+body:not(.site-loaded) footer {
+    opacity: 0;
+    transform: translateY(50px); /* Empurra para baixo */
+}
+
+/* Define a suavidade da animação quando a classe .site-loaded entra */
+.site-loaded .announcement-bar,
+.site-loaded header,
+.site-loaded .hero,
+.site-loaded .infos-bar,
+.site-loaded main,
+.site-loaded .how-to-buy-section,
+.site-loaded .faq-section,
+.site-loaded .feedbacks-section,
+.site-loaded footer {
+    opacity: 1;
+    transform: translateY(0);
+    /* Curva de animação "cubic-bezier" para um efeito elástico e suave */
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Ordem de entrada (Cascata) - Um entra depois do outro */
+.site-loaded .announcement-bar { transition-delay: 0.1s; }
+.site-loaded header { transition-delay: 0.2s; }
+.site-loaded .hero { transition-delay: 0.4s; }
+.site-loaded .infos-bar { transition-delay: 0.6s; }
+.site-loaded main { transition-delay: 0.8s; }
+.site-loaded footer { transition-delay: 1.2s; }

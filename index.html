@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pudin Clothes 🍮 | Garimpos & Mimos</title>
+    
+    <!-- SEO & Social (Para ficar bonito no WhatsApp/Instagram) -->
+    <meta property="og:title" content="Pudin Clothes 🍮 | Brechó Online">
+    <meta property="og:description" content="Garimpos com amor, estética e mimos. Moda circular e alternativa entregue em todo o Brasil! 🎀">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1550614000-4b9519e02a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80">
+    <meta property="og:url" content="https://pudinclothes.com.br">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +19,17 @@
     <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
 </head>
 <body>
+
+    <!-- Global Loader (Tela de Carregamento) -->
+    <div id="global-loader">
+        <div class="pudin-loader" style="font-size: 5rem;">🍮</div>
+        <p style="font-family: var(--font-heading); font-size: 2rem; margin-top: 15px;">Carregando mimos...</p>
+    </div>
+
+    <!-- Barra de Anúncios -->
+    <div class="announcement-bar">
+        🚚 Frete Grátis para São Paulo nas compras acima de R$ 200,00! Aproveite! 💖
+    </div>
 
     <header>
         <div class="logo">🍮 Pudin Clothes</div>
@@ -60,9 +78,65 @@
         <div class="filters">
             <input type="text" id="search-input" placeholder="🔍 O que você procura?" class="search-bar" aria-label="Buscar produtos">
             <button class="filter-btn active" data-category="all">Tudinho</button>
+            <!-- Categorias -->
             <button class="filter-btn" data-category="roupas">Looks</button>
             <button class="filter-btn" data-category="acessorios">Acessórios</button>
             <button class="filter-btn" data-category="calcados">Calçados</button>
+            
+            <!-- Menu de Tamanhos (Collapsible) -->
+            <details class="size-filter-menu">
+                <summary>📏 Filtrar por Tamanho</summary>
+                
+                <p style="margin: 10px 0 5px 0; font-weight: bold; color: var(--accent-color);">👗 Roupas</p>
+                <div class="size-buttons-container">
+                    <button class="filter-btn size-btn" data-size="PP">PP</button>
+                    <button class="filter-btn size-btn" data-size="P">P</button>
+                    <button class="filter-btn size-btn" data-size="M">M</button>
+                    <button class="filter-btn size-btn" data-size="G">G</button>
+                    <button class="filter-btn size-btn" data-size="GG">GG</button>
+                    <button class="filter-btn size-btn" data-size="XG">XG</button>
+                    
+                    <button class="filter-btn size-btn" data-size="32">32</button>
+                    <button class="filter-btn size-btn" data-size="34">34</button>
+                    <button class="filter-btn size-btn" data-size="36">36</button>
+                    <button class="filter-btn size-btn" data-size="38">38</button>
+                    <button class="filter-btn size-btn" data-size="40">40</button>
+                    <button class="filter-btn size-btn" data-size="42">42</button>
+                    <button class="filter-btn size-btn" data-size="44">44</button>
+                    <button class="filter-btn size-btn" data-size="46">46</button>
+                    <button class="filter-btn size-btn" data-size="48">48</button>
+                    <button class="filter-btn size-btn" data-size="50">50</button>
+                    <button class="filter-btn size-btn" data-size="52">52</button>
+                </div>
+
+                <div style="margin: 15px auto; border-top: 1px dashed var(--text-color); width: 80%; opacity: 0.3;"></div>
+
+                <p style="margin: 5px 0 5px 0; font-weight: bold; color: var(--accent-color);">👠 Calçados</p>
+                <div class="size-buttons-container">
+                    <button class="filter-btn size-btn" data-size="33">33</button>
+                    <button class="filter-btn size-btn" data-size="34">34</button>
+                    <button class="filter-btn size-btn" data-size="35">35</button>
+                    <button class="filter-btn size-btn" data-size="36">36</button>
+                    <button class="filter-btn size-btn" data-size="37">37</button>
+                    <button class="filter-btn size-btn" data-size="38">38</button>
+                    <button class="filter-btn size-btn" data-size="39">39</button>
+                    <button class="filter-btn size-btn" data-size="40">40</button>
+                    <button class="filter-btn size-btn" data-size="41">41</button>
+                    <button class="filter-btn size-btn" data-size="42">42</button>
+                    <button class="filter-btn size-btn" data-size="43">43</button>
+                    <button class="filter-btn size-btn" data-size="44">44</button>
+                </div>
+            </details>
+
+            <!-- Menu de Preços (Collapsible) -->
+            <details class="size-filter-menu" style="margin-top: 10px;">
+                <summary>💰 Filtrar por Preço</summary>
+                <div class="size-buttons-container">
+                    <button class="filter-btn size-btn" data-price-range="under-50">Até R$ 50</button>
+                    <button class="filter-btn size-btn" data-price-range="50-100">R$ 50 a R$ 100</button>
+                    <button class="filter-btn size-btn" data-price-range="over-100">+ de R$ 100</button>
+                </div>
+            </details>
         </div>
 
         <div class="product-grid" id="product-grid">
@@ -70,10 +144,63 @@
         </div>
     </main>
 
+    <!-- Seção Como Comprar -->
+    <section class="how-to-buy-section">
+        <div class="section-title">
+            <h2>🛍️ Como Comprar?</h2>
+            <p>É super fácil garantir seus garimpos!</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Encha a Sacola</h3>
+                <p>Escolha seus mimos favoritos e adicione à sacola aqui no site.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Envie no Zap</h3>
+                <p>Clique em "Finalizar" para enviar o pedido para a Lara ou Monalisa.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Pix & Envio</h3>
+                <p>Combine o pagamento (Pix) e a entrega direto no chat com a gente!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Dúvidas (FAQ) -->
+    <section class="faq-section" style="max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem;">
+        <div class="section-title">
+            <h2>🤔 Dúvidas Frequentes</h2>
+        </div>
+        <details>
+            <summary>Como funciona o envio?</summary>
+            <p>Enviamos para todo o Brasil via Correios (PAC ou Sedex). O frete é calculado direto no WhatsApp com a gente!</p>
+        </details>
+        <details>
+            <summary>Posso reservar uma peça?</summary>
+            <p>Para reservar, é necessário o pagamento do valor integral da peça (o frete a gente vê depois). Manda um oi no Zap pra combinar!</p>
+        </details>
+        <details>
+            <summary>As peças são higienizadas?</summary>
+            <p>Com certeza! Todas as peças passam por curadoria, lavagem e vão super cheirosas pra você. 🧼✨</p>
+        </details>
+    </section>
+
     <!-- Seção de Feedbacks -->
     <section id="feedbacks" class="feedbacks-section">
+        <!-- Vídeo Direto (Exemplo) -->
+        <div class="video-section">
+            <h2>Vejam como a Lara garimpa! 🎥</h2>
+            <video controls class="styled-video">
+                <source src="garimpo.mp4" type="video/mp4">
+                Seu navegador não suporta vídeos.
+            </video>
+        </div>
+
         <h2>O que as pudins dizem 💖</h2>
-        
+
         <!-- Destaques do Instagram -->
         <div class="instagram-highlights">
             <a href="https://www.instagram.com/stories/highlights/18000630719560226/" target="_blank" rel="noopener noreferrer" class="highlight-item">
@@ -90,24 +217,18 @@
             </a>
         </div>
 
-        <!-- Vídeo Direto (Exemplo) -->
-        <div class="video-section">
-            <p style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 10px;">Vejam como a Lara garimpa! 🎥</p>
-            <video controls class="styled-video">
-                <source src="garimpo.mp4" type="video/mp4">
-                Seu navegador não suporta vídeos.
-            </video>
-        </div>
-
         <div class="feedback-grid">
             <div class="feedback-card">
-                <img src="feedback1.jpg" alt="Feedback 1" style="width: 100%; border-radius: 8px;">
+                <img src="feedback4.jpeg" alt="Feedback 4" style="width: 100%; border-radius: 8px;">
             </div>
             <div class="feedback-card">
-                <img src="feedback2.jpg" alt="Feedback 2" style="width: 100%; border-radius: 8px;">
+                <img src="feedback5.jpeg" alt="Feedback 5" style="width: 100%; border-radius: 8px;">
             </div>
             <div class="feedback-card">
-                <img src="feedback3.jpg" alt="Feedback 3" style="width: 100%; border-radius: 8px;">
+                <img src="feedback6.jpeg" alt="Feedback 6" style="width: 100%; border-radius: 8px;">
+            </div>
+            <div class="feedback-card">
+                <img src="feedback7.jpeg" alt="Feedback 7" style="width: 100%; border-radius: 8px;">
             </div>
         </div>
     </section>
@@ -151,6 +272,9 @@
 
     <!-- Botão Voltar ao Topo -->
     <button id="back-to-top" title="Voltar ao topo">⬆️</button>
+
+    <!-- Botão Flutuante do WhatsApp -->
+    <a href="https://wa.me/5511993336808?text=Oii%20Lara!%20Vim%20pelo%20site%20e%20tenho%20uma%20d%C3%BAvida%20%F0%9F%8D%AE" target="_blank" class="floating-whatsapp" title="Fale com a gente!">💬</a>
 
     <script src="script.js"></script>
     <script src="contentful-logic.js"></script>

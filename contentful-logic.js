@@ -12,8 +12,7 @@ const productGrid = document.getElementById('product-grid');
 
 // Função para buscar produtos do Contentful
 function fetchContentfulProducts() {
-    // Feedback de carregamento
-    productGrid.innerHTML = '<p style="text-align:center; width:100%; margin-top:20px;">Carregando mimos do Contentful... 🍮</p>';
+    // O loader agora é global (tela cheia) e está no HTML
 
     client.getEntries({
         content_type: 'pudinclotches', // ID corrigido conforme o Contentful
@@ -30,33 +29,52 @@ function fetchContentfulProducts() {
             const fields = item.fields;
             return {
                 id: item.sys.id, // ID único do Contentful (ex: "4a2B...")
+                createdAt: item.sys.createdAt, // Data de criação para saber se é novidade
                 title: fields.title,
                 // Força a categoria para minúsculo para garantir que os filtros funcionem
                 category: fields.category ? fields.category.toLowerCase() : 'outros',
                 price: fields.price || 0,
                 // Pega todas as imagens se existirem, senão array vazio
-                images: fields.images ? fields.images.map(img => img.fields.file.url) : [],
+                // LÓGICA DE CARROSSEL: Tenta pegar várias ('images') ou uma só ('image')
+                images: (function() {
+                    if (fields.images && fields.images.length > 0) {
+                        return fields.images.map(img => img.fields.file.url + '?w=800&q=85');
+                    } else if (fields.image) {
+                        return [fields.image.fields.file.url + '?w=800&q=85'];
+                    }
+                    return [];
+                })(),
                 stock: typeof fields.stock === 'number' ? fields.stock : 1,
                 sold: fields.stock === 0,
                 owner: fields.owner ? fields.owner.toLowerCase() : 'lara', // Padrão é Lara se esquecer de preencher
-                size: fields.size || 'Único',
+                size: fields.size ? String(fields.size) : 'Único', // Garante que seja texto para o filtro funcionar
                 defects: fields.defects || null
             };
         });
 
-        // Atualiza a lista global de produtos do script.js
-        window.products = contentfulProducts;
+        // Adiciona um delay de 1.5s para garantir que o loader (Pudim) seja visto
+        setTimeout(() => {
+            // Atualiza a lista global de produtos do script.js
+            window.products = contentfulProducts;
 
-        // Chama a função original do script.js para desenhar na tela
-        // Isso garante que os filtros, busca e botão de carrinho funcionem!
-        if (typeof renderProducts === 'function') {
-            renderProducts(window.products);
-            // Valida a sacola agora que temos os dados reais de estoque
-            if (typeof validateCartStock === 'function') {
-                validateCartStock();
-                updateCartCounter();
+            // Chama a função original do script.js para desenhar na tela
+            if (typeof renderProducts === 'function') {
+                renderProducts(window.products);
+                // Valida a sacola agora que temos os dados reais de estoque
+                if (typeof validateCartStock === 'function') {
+                    validateCartStock();
+                    updateCartCounter();
+                }
+                
+                // Remove o loader global com um efeito de fade out
+                const loader = document.getElementById('global-loader');
+                if(loader) {
+                    loader.style.opacity = '0';
+                    document.body.classList.add('site-loaded'); // Dispara a transição cinemática
+                    setTimeout(() => loader.remove(), 500);
+                }
             }
-        }
+        }, 1500);
     })
     .catch((error) => {
         console.error("Erro ao buscar do Contentful:", error);

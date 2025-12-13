@@ -37,7 +37,8 @@ const cartModal = document.getElementById('cart-modal');
 
 async function init() {
     await loadProductsData(); // Carrega os produtos (local ou externo)
-    renderProducts(products);
+    // REMOVIDO: renderProducts(products); 
+    // Deixamos o Contentful controlar a primeira pintura para mostrar o Loader de Pudim direto!
     setupFilters();
     setupSearch();
     setupBackToTop();
@@ -92,6 +93,10 @@ function renderProducts(list) {
         const card = document.createElement('article');
         const isSold = product.stock === 0 ? 'sold' : '';
         card.className = `product-card ${isSold}`;
+        
+        // Verifica se é novidade (menos de 7 dias)
+        const daysSinceCreation = (new Date() - new Date(product.createdAt)) / (1000 * 60 * 60 * 24);
+        const isNew = daysSinceCreation < 7;
 
         const qtyInCart = cart.filter(i => i.id == product.id).length;
         const btnText = qtyInCart > 0 ? `Eu quero! (${qtyInCart})` : 'Eu quero!';
@@ -102,7 +107,7 @@ function renderProducts(list) {
 
         // Gera HTML das imagens
         const imagesHtml = product.images.map((img, index) => 
-            `<img src="${img}" class="product-image ${index === 0 ? 'active' : ''}" data-index="${index}">`
+            `<img src="${img}" class="product-image ${index === 0 ? 'active' : ''}" data-index="${index}" loading="lazy">`
         ).join('');
 
         // Botões de navegação (só aparecem se tiver mais de 1 foto)
@@ -113,6 +118,7 @@ function renderProducts(list) {
         
         card.innerHTML = `
             ${isSold ? '<div class="sold-badge">ESGOTADO</div>' : ''}
+            ${!isSold && isNew ? '<div class="new-badge">✨ NOVIDADE</div>' : ''}
             <div class="owner-tag ${ownerClass}">${ownerDisplay}</div>
             <div class="image-container" id="slider-${product.id}">
                 ${imagesHtml}
@@ -189,39 +195,90 @@ function changeImage(productId, direction) {
 }
 
 function setupSearch() {
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        
-        // Se tiver texto, filtra tudo. Se não, volta ao estado atual (ou tudo)
-        if(term.length > 0) {
-            // Remove active dos botões de categoria visualmente
-            filterButtons.forEach(b => b.classList.remove('active'));
-            
-            const filtered = products.filter(p => p.title.toLowerCase().includes(term));
-            renderProducts(filtered);
-        } else {
-            // Se limpar, reseta para "Tudinho"
-            document.querySelector('[data-category="all"]').click();
-        }
+    searchInput.addEventListener('input', () => {
+        applyFilters();
     });
 }
 
 function setupFilters() {
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Remove active de todos
-            filterButtons.forEach(b => b.classList.remove('active'));
-            // Adiciona active ao clicado
-            btn.classList.add('active');
-            
-            // Limpa a busca ao clicar em categoria
-            searchInput.value = '';
-            
-            const category = btn.dataset.category;
-            const filtered = category === 'all' ? products : products.filter(p => p.category === category);
-            renderProducts(filtered);
+            // Identifica o grupo do botão clicado
+            const isCategory = btn.hasAttribute('data-category');
+            const isSize = btn.hasAttribute('data-size');
+            const isPrice = btn.hasAttribute('data-price-range');
+
+            if (isCategory) {
+                // Categoria: Exclusiva (comportamento de rádio)
+                // Remove active de outros botões de categoria
+                document.querySelectorAll('.filter-btn[data-category]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            } 
+            else if (isSize) {
+                // Tamanho: Toggle (pode marcar/desmarcar) e Exclusivo no grupo
+                if (btn.classList.contains('active')) {
+                    btn.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.filter-btn[data-size]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            } 
+            else if (isPrice) {
+                // Preço: Toggle e Exclusivo no grupo
+                if (btn.classList.contains('active')) {
+                    btn.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.filter-btn[data-price-range]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            }
+
+            applyFilters();
         });
     });
+}
+
+function applyFilters() {
+    let filtered = products;
+
+    // 1. Busca por Texto
+    const term = searchInput.value.toLowerCase();
+    if (term.length > 0) {
+        filtered = filtered.filter(p => 
+            p.title.toLowerCase().includes(term) ||
+            (p.category && p.category.toLowerCase().includes(term)) ||
+            (p.size && p.size.toLowerCase().includes(term)) ||
+            (p.owner && p.owner.toLowerCase().includes(term))
+        );
+    }
+
+    // 2. Filtro de Categoria
+    const activeCategory = document.querySelector('.filter-btn[data-category].active');
+    if (activeCategory && activeCategory.dataset.category !== 'all') {
+        filtered = filtered.filter(p => p.category === activeCategory.dataset.category);
+    }
+
+    // 3. Filtro de Tamanho
+    const activeSize = document.querySelector('.filter-btn[data-size].active');
+    if (activeSize) {
+        const size = activeSize.dataset.size;
+        filtered = filtered.filter(p => p.size && p.size.toUpperCase().includes(size));
+    }
+
+    // 4. Filtro de Preço
+    const activePrice = document.querySelector('.filter-btn[data-price-range].active');
+    if (activePrice) {
+        const range = activePrice.dataset.priceRange;
+        if (range === 'under-50') {
+            filtered = filtered.filter(p => p.price <= 50);
+        } else if (range === '50-100') {
+            filtered = filtered.filter(p => p.price > 50 && p.price <= 100);
+        } else if (range === 'over-100') {
+            filtered = filtered.filter(p => p.price > 100);
+        }
+    }
+
+    renderProducts(filtered);
 }
 
 function addToCart(e) {
