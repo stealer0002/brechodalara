@@ -113,7 +113,13 @@ function renderProducts(list) {
             </div>
             <div class="product-info">
                 <h3 class="product-title">${escapeHtml(product.title)}</h3>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                
+                <div class="product-meta">
+                    <span class="product-size">📏 Tam: <strong>${escapeHtml(product.size || 'Único')}</strong></span>
+                    ${product.defects ? `<span class="product-defect">⚠️ ${escapeHtml(product.defects)}</span>` : ''}
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <span class="product-price">R$ ${product.price.toFixed(2).replace('.', ',')}</span>
                     <div>
                         ${isSold 
@@ -400,7 +406,7 @@ function checkout() {
     cart.forEach(item => {
         // Busca o produto original para garantir o preço atual (segurança contra manipulação)
         const product = products.find(p => p.id == item.id) || item;
-        message += `- ${product.title}: R$ ${product.price.toFixed(2).replace('.', ',')}\n`;
+        message += `- ${product.title} (Tam: ${product.size || 'Único'}): R$ ${product.price.toFixed(2).replace('.', ',')}\n`;
         total += product.price;
     });
     message += `\n*Total: R$ ${total.toFixed(2).replace('.', ',')}*`;
@@ -436,7 +442,7 @@ function checkoutOwner(owner) {
     ownerItems.forEach(item => {
         // Busca o produto original para garantir o preço
         const product = products.find(p => p.id == item.id) || item;
-        message += `- ${product.title}: R$ ${product.price.toFixed(2).replace('.', ',')}\n`;
+        message += `- ${product.title} (Tam: ${product.size || 'Único'}): R$ ${product.price.toFixed(2).replace('.', ',')}\n`;
         subtotal += product.price;
     });
     

@@ -265,6 +265,20 @@ nav a:hover { color: var(--accent-color); }
 .product-title { font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 0.5rem; }
 .product-price { color: var(--accent-color); font-weight: bold; font-size: 1.1rem; }
 
+.product-meta {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-defect {
+    color: #d63031; /* Vermelho alerta */
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
 /* --- Estilos de Produto Vendido --- */
 .product-card.sold .product-image {
     filter: grayscale(100%);
