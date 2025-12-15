@@ -270,6 +270,14 @@
         </div>
     </div>
 
+    <!-- Modal de Visualização de Imagem (Lightbox) -->
+    <div id="image-modal" class="modal-overlay" onclick="closeImageModal()">
+        <span class="close-modal-btn">&times;</span>
+        <button id="modal-prev" class="modal-nav-btn prev" onclick="event.stopPropagation(); changeModalImage(-1)">&#10094;</button>
+        <img id="modal-image" src="" alt="Visualização ampliada" onclick="event.stopPropagation()">
+        <button id="modal-next" class="modal-nav-btn next" onclick="event.stopPropagation(); changeModalImage(1)">&#10095;</button>
+    </div>
+
     <!-- Container de Notificações -->
     <div id="toast-container"></div>
 

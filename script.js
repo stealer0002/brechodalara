@@ -107,7 +107,7 @@ function renderProducts(list) {
 
         // Gera HTML das imagens
         const imagesHtml = product.images.map((img, index) => 
-            `<img src="${img}" class="product-image ${index === 0 ? 'active' : ''}" data-index="${index}" loading="lazy">`
+            `<img src="${img}" class="product-image ${index === 0 ? 'active' : ''}" data-index="${index}" loading="lazy" onclick="openImageModal('${product.id}', ${index})" style="cursor: zoom-in;" title="Clique para ampliar">`
         ).join('');
 
         // Botões de navegação (só aparecem se tiver mais de 1 foto)
@@ -543,6 +543,50 @@ function finishCheckout() {
     showToast(`Oba! Compra finalizada, ${getRandomTerm()}! 🎉`, 'success');
 }
 
+let currentModalImages = [];
+let currentModalIndex = 0;
+
+function openImageModal(productId, index) {
+    const product = products.find(p => String(p.id) === String(productId));
+    if (!product) return;
+
+    currentModalImages = product.images;
+    currentModalIndex = index;
+    
+    updateModalImage();
+    
+    const modal = document.getElementById('image-modal');
+    modal.style.display = 'flex';
+}
+
+function updateModalImage() {
+    const img = document.getElementById('modal-image');
+    img.src = currentModalImages[currentModalIndex];
+    
+    // Mostra/Oculta botões dependendo se tem mais de uma foto
+    const prevBtn = document.getElementById('modal-prev');
+    const nextBtn = document.getElementById('modal-next');
+    const hasMultiple = currentModalImages.length > 1;
+    
+    prevBtn.style.display = hasMultiple ? 'block' : 'none';
+    nextBtn.style.display = hasMultiple ? 'block' : 'none';
+}
+
+function changeModalImage(step) {
+    currentModalIndex += step;
+    
+    // Loop infinito (vai do último pro primeiro e vice-versa)
+    if (currentModalIndex >= currentModalImages.length) currentModalIndex = 0;
+    if (currentModalIndex < 0) currentModalIndex = currentModalImages.length - 1;
+    
+    updateModalImage();
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('image-modal');
+    modal.style.display = 'none';
+}
+
 function setupBackToTop() {
     const btn = document.getElementById('back-to-top');
     
@@ -558,6 +602,34 @@ function setupBackToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
+
+// Navegação por teclado no modal
+document.addEventListener('keydown', (e) => {
+    if (document.getElementById('image-modal').style.display === 'flex') {
+        if (e.key === 'ArrowLeft') changeModalImage(-1);
+        if (e.key === 'ArrowRight') changeModalImage(1);
+        if (e.key === 'Escape') closeImageModal();
+    }
+});
+
+// --- Navegação por Swipe (Toque) para Celular ---
+let touchStartX = 0;
+let touchEndX = 0;
+
+const modalElement = document.getElementById('image-modal');
+
+modalElement.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+}, {passive: true});
+
+modalElement.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    if (modalElement.style.display === 'flex') {
+        // Se deslizou mais de 50px, troca a foto
+        if (touchEndX < touchStartX - 50) changeModalImage(1); // Deslizou p/ Esquerda -> Próximo
+        if (touchEndX > touchStartX + 50) changeModalImage(-1); // Deslizou p/ Direita -> Anterior
+    }
+}, {passive: true});
 
 // Iniciar aplicação
 init();

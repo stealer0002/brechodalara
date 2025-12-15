@@ -707,6 +707,72 @@ footer {
     margin-left: 5px;
 }
 
+/* --- Image Lightbox Modal --- */
+#image-modal {
+    background: rgba(0,0,0,0.9); /* Fundo escuro para destaque */
+    z-index: 3000; /* Acima de tudo */
+    cursor: zoom-out;
+}
+
+#modal-image {
+    max-width: 90%;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    object-fit: contain;
+    cursor: default;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #fff;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.close-modal-btn:hover {
+    transform: scale(1.1);
+    color: var(--accent-color);
+}
+
+.modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    font-size: 3rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    z-index: 3001;
+    border-radius: 5px;
+    user-select: none;
+}
+
+.modal-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.modal-nav-btn.prev { left: 20px; }
+.modal-nav-btn.next { right: 20px; }
+
+/* Ajuste para mobile */
+@media (max-width: 767px) {
+    .modal-nav-btn {
+        font-size: 2rem;
+        padding: 15px;
+        background: rgba(0,0,0,0.3);
+    }
+    .modal-nav-btn.prev { left: 5px; }
+    .modal-nav-btn.next { right: 5px; }
+}
+
 /* --- Cart Quantity Controls --- */
 .cart-qty-controls {
     display: flex;
